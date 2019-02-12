@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'tournament.apps.TournamentConfig',
 ]
 
+AUTH_USER_MODEL = 'tournament.Fencer'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
