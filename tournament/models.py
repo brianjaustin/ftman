@@ -22,8 +22,11 @@ class Fencer(AbstractUser):
     not renewed). Note that one must set set this as `AUTH_USER_MODEL` in `settings.py` or face errors from Django.
     """
     foil_rating = models.CharField(max_length=1, choices=RATINGS, default='U')
+    foil_year = models.PositiveIntegerField()
     epee_rating = models.CharField(max_length=1, choices=RATINGS, default='U')
+    epee_year = models.PositiveIntegerField()
     sabre_rating = models.CharField(max_length=1, choices=RATINGS, default='U')
+    sabre_year = models.PositiveIntegerField()
 
     def __str__(self):
         """
@@ -63,6 +66,12 @@ class Tournament(models.Model):
         """
         return self.registration_close >= time >= self.registration_open
 
+    class Meta:
+        """
+        Order tournaments by when they take place.
+        """
+        ordering = ('registration_close', 'registration_open')
+
 
 class Event(models.Model):
     """
@@ -76,6 +85,7 @@ class Event(models.Model):
     rating_max = models.CharField(max_length=1, choices=RATINGS, default='A', verbose_name="Maximum Rating")
     fencers_max = models.IntegerField(verbose_name="Maximum Number of Fencers")
     tournament = models.ForeignKey(Tournament, models.CASCADE)
+    fencers = models.ManyToManyField(Fencer)
 
     def __str__(self):
         """
