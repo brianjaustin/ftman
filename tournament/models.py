@@ -22,11 +22,11 @@ class Fencer(AbstractUser):
     not renewed). Note that one must set set this as `AUTH_USER_MODEL` in `settings.py` or face errors from Django.
     """
     foil_rating = models.CharField(max_length=1, choices=RATINGS, default='U')
-    foil_year = models.PositiveIntegerField()
+    foil_year = models.PositiveIntegerField(blank=True, null=True)
     epee_rating = models.CharField(max_length=1, choices=RATINGS, default='U')
-    epee_year = models.PositiveIntegerField()
+    epee_year = models.PositiveIntegerField(blank=True, null=True)
     sabre_rating = models.CharField(max_length=1, choices=RATINGS, default='U')
-    sabre_year = models.PositiveIntegerField()
+    sabre_year = models.PositiveIntegerField(blank=True, null=True)
 
     def __str__(self):
         """
