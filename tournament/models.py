@@ -1,7 +1,6 @@
-import datetime
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 RATINGS = (('A', 'A'),
            ('B', 'B'),
@@ -55,7 +54,7 @@ class Tournament(models.Model):
         """
         return self.name
 
-    def can_register(self, time=datetime.datetime.now()):
+    def can_register(self, time=timezone.now()):
         """
         Determines if fencers may register at the given time.
         Args:
