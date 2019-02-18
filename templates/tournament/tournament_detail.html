@@ -18,4 +18,30 @@
     </p>
   </div>
 </div>
+<h4>Events</h4>
+<div class="accordion" id="eventAccordion">
+  {% for event in tournament.event_set.all %}
+  <div class="card">
+    <div class="card-header" id="heading_{{ event|slugify }}">
+      <h2 class="mb-0">
+        <button class="btn btn-link" type="button" data-toggle="collapse"
+                data-target="#collapse_{{ event|slugify }}" aria-expanded="false" aria-controls="collapse_{{ event|slugify }}">
+          {{ event }}
+        </button>
+      </h2>
+    </div>
+    <div id="collapse_{{ event|slugify }}" class="collapse" aria-labelledby="heading_{{ event|slugify }}" data-parent="#eventAccordion">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm">{{ event.fencers.count }} / {{ event.fencers_max }} fencers</div>
+          <div class="col-sm">${{ event.fee }}</div>
+        </div>
+        <p>{{ event.description }}</p>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p>This tournament does not have any events.</p>
+{% endfor %}
+</div>
 {% endblock content %}

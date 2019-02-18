@@ -88,11 +88,15 @@ class Event(models.Model):
 
     def __str__(self):
         """
-        Default string representation of an event is its name.
+        Default string representation of an event is its name, or name and
+        weapon if the name doesn't already have it.
         Returns:
-            This event's name
+            This event's string representation
         """
-        return self.name
+        if self.get_weapon_display() in self.name:
+            return self.name
+        else:
+            return "{} [{}]".format(self.name, self.get_weapon_display())
 
     def can_fence(self, fencer):
         """
