@@ -79,12 +79,12 @@ class Event(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
     weapon = models.CharField(max_length=1, choices=WEAPONS, default='E')
-    fee = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
+    fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     rating_min = models.CharField(max_length=1, choices=RATINGS, default='U', verbose_name="Minimum Rating")
     rating_max = models.CharField(max_length=1, choices=RATINGS, default='A', verbose_name="Maximum Rating")
     fencers_max = models.IntegerField(verbose_name="Maximum Number of Fencers")
     tournament = models.ForeignKey(Tournament, models.CASCADE)
-    fencers = models.ManyToManyField(Fencer)
+    fencers = models.ManyToManyField(Fencer, blank=True, null=True)
 
     def __str__(self):
         """
