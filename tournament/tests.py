@@ -104,6 +104,6 @@ class TournamentModelTests(TestCase):
         Tournament(name='Tournament 2', registration_open=now, registration_close=tomorrow, registration_fee=0).save()
         Tournament(name='Tournament 3', registration_open=yesterday, registration_close=now, registration_fee=0).save()
         tournaments = Tournament.objects.all()
-        self.assertEqual(tournaments[0].name, 'Tournament 3')
+        self.assertEqual(tournaments[0].name, 'Tournament 2')
         self.assertEqual(tournaments[1].name, 'Tournament 1')
-        self.assertEqual(tournaments[2].name, 'Tournament 2')
+        self.assertEqual(tournaments[2].name, 'Tournament 3')

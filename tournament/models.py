@@ -69,7 +69,7 @@ class Tournament(models.Model):
         """
         Order tournaments by when they take place.
         """
-        ordering = ('registration_close', 'registration_open')
+        ordering = ('-registration_close', '-registration_open')
 
 
 class Event(models.Model):
