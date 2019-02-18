@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Tournament Detail{% endblock title %}
+
+{% block content %}
+<h3>{{ tournament.name }}</h3>
+<div class="row">
+  {% if tournament.description %}
+  <div class="col-md">
+
+  </div>
+  {% endif %}
+  <div class="col-md">
+    <p>
+      <b>Registration Open:</b> {{ tournament.registration_open }}<br />
+      <b>Registration Close:</b> {{ tournament.registration_close }}<br />
+      <b>Registration Fee:</b> ${{ tournament.registration_fee }}
+    </p>
+  </div>
+</div>
+<p>{{ tournament.description }}</p>
+{% endblock content %}
