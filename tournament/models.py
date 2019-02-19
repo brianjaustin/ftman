@@ -113,11 +113,11 @@ class Event(models.Model):
         if self.fencers_max <= self.fencers.count():
             return False
         if self.weapon == 'E':
-            return self.rating_max >= fencer.epee_rating >= self.rating_min
+            return self.rating_max <= fencer.epee_rating <= self.rating_min
         elif self.weapon == 'F':
-            return self.rating_max >= fencer.foil_rating >= self.rating_min
+            return self.rating_max <= fencer.foil_rating <= self.rating_min
         else:
-            return self.rating_max >= fencer.sabre_rating >= self.rating_min
+            return self.rating_max <= fencer.sabre_rating <= self.rating_min
 
 
 class Result(models.Model):
