@@ -84,7 +84,7 @@ class Event(models.Model):
     rating_max = models.CharField(max_length=1, choices=RATINGS, default='A', verbose_name="Maximum Rating")
     fencers_max = models.IntegerField(verbose_name="Maximum Number of Fencers")
     tournament = models.ForeignKey(Tournament, models.CASCADE)
-    fencers = models.ManyToManyField(Fencer, blank=True, null=True)
+    fencers = models.ManyToManyField(Fencer, blank=True)
 
     def __str__(self):
         """
@@ -103,13 +103,15 @@ class Event(models.Model):
         Determines if the given fencer can fence in this event.
 
         A fencer is allowed to fence in an event if their rating for the event's weapon is between the bounds
-        specified for the event.
+        specified for the event AND the cap hasn't been reached.
         Args:
             fencer: the fencer to check
 
         Returns:
             True if the fencer may participate, False otherwise
         """
+        if self.fencers_max <= self.fencers.count():
+            return False
         if self.weapon == 'E':
             return self.rating_max >= fencer.epee_rating >= self.rating_min
         elif self.weapon == 'F':

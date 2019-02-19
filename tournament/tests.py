@@ -3,7 +3,7 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.utils import timezone
 
-from .models import Tournament
+from .models import Tournament, Event
 
 
 class FencerModelTests(TestCase):
@@ -107,3 +107,27 @@ class TournamentModelTests(TestCase):
         self.assertEqual(tournaments[0].name, 'Tournament 2')
         self.assertEqual(tournaments[1].name, 'Tournament 1')
         self.assertEqual(tournaments[2].name, 'Tournament 3')
+
+
+class EventModelTests(TestCase):
+
+    def test_create_event(self):
+        yesterday = timezone.now() - timezone.timedelta(days=1)
+        tomorrow = timezone.now() + timezone.timedelta(days=1)
+        Tournament(name='Tournament 1', registration_open=yesterday, registration_close=tomorrow,
+                   registration_fee=0).save()
+        event = Event()
+        event.name = 'Test Event'
+        event.fee = 0
+        event.fencers_max = 15
+        event.tournament = Tournament.objects.get(pk=1)
+        event.save()
+        event = Event.objects.get(pk=1)
+        self.assertEqual(event.name, 'Test Event')
+        self.assertEqual(event.weapon, 'E')
+        self.assertEqual(event.fee, 0)
+        self.assertEqual(event.rating_min, 'U')
+        self.assertEqual(event.rating_max, 'A')
+        self.assertEqual(event.fencers_max, 15)
+        self.assertEqual(event.tournament.name, 'Tournament 1')
+        self.assertEqual(event.fencers.all().count(), 0)
