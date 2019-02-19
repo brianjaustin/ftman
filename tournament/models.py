@@ -2,14 +2,16 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 
-RATINGS = (('A', 'A'),
-           ('B', 'B'),
-           ('C', 'C'),
-           ('D', 'D',),
-           ('E', 'E'),
-           ('U', 'U'))
+RATINGS = (
+    ("A", "A"),
+    ("B", "B"),
+    ("C", "C"),
+    ("D", "D"),
+    ("E", "E"),
+    ("U", "U"),
+)
 
-WEAPONS = (('E', 'Epee'), ('F', 'Foil'), ('S', 'Sabre'))
+WEAPONS = (("E", "Epee"), ("F", "Foil"), ("S", "Sabre"))
 
 
 class Fencer(AbstractUser):
@@ -20,11 +22,12 @@ class Fencer(AbstractUser):
     so fencers or administrators will need to update their ratings by hand every 4 years (assuming that ratings are
     not renewed). Note that one must set set this as `AUTH_USER_MODEL` in `settings.py` or face errors from Django.
     """
-    foil_rating = models.CharField(max_length=1, choices=RATINGS, default='U')
+
+    foil_rating = models.CharField(max_length=1, choices=RATINGS, default="U")
     foil_year = models.PositiveIntegerField(blank=True, null=True)
-    epee_rating = models.CharField(max_length=1, choices=RATINGS, default='U')
+    epee_rating = models.CharField(max_length=1, choices=RATINGS, default="U")
     epee_year = models.PositiveIntegerField(blank=True, null=True)
-    sabre_rating = models.CharField(max_length=1, choices=RATINGS, default='U')
+    sabre_rating = models.CharField(max_length=1, choices=RATINGS, default="U")
     sabre_year = models.PositiveIntegerField(blank=True, null=True)
 
     def __str__(self):
@@ -40,11 +43,14 @@ class Tournament(models.Model):
     """
     Represents a tournament, comprised of Events in which Fencers compete.
     """
+
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
     registration_open = models.DateTimeField()
     registration_close = models.DateTimeField()
-    registration_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    registration_fee = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0.00
+    )
 
     def __str__(self):
         """
@@ -69,19 +75,31 @@ class Tournament(models.Model):
         """
         Order tournaments by when they take place.
         """
-        ordering = ('-registration_close', '-registration_open')
+
+        ordering = ("-registration_close", "-registration_open")
 
 
 class Event(models.Model):
     """
     Represents an individual event that is part of a Tournament.
     """
+
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
-    weapon = models.CharField(max_length=1, choices=WEAPONS, default='E')
+    weapon = models.CharField(max_length=1, choices=WEAPONS, default="E")
     fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    rating_min = models.CharField(max_length=1, choices=RATINGS, default='U', verbose_name="Minimum Rating")
-    rating_max = models.CharField(max_length=1, choices=RATINGS, default='A', verbose_name="Maximum Rating")
+    rating_min = models.CharField(
+        max_length=1,
+        choices=RATINGS,
+        default="U",
+        verbose_name="Minimum Rating",
+    )
+    rating_max = models.CharField(
+        max_length=1,
+        choices=RATINGS,
+        default="A",
+        verbose_name="Maximum Rating",
+    )
     fencers_max = models.IntegerField(verbose_name="Maximum Number of Fencers")
     tournament = models.ForeignKey(Tournament, models.CASCADE)
     fencers = models.ManyToManyField(Fencer, blank=True)
@@ -112,9 +130,9 @@ class Event(models.Model):
         """
         if self.fencers_max <= self.fencers.count():
             return False
-        if self.weapon == 'E':
+        if self.weapon == "E":
             return self.rating_max <= fencer.epee_rating <= self.rating_min
-        elif self.weapon == 'F':
+        elif self.weapon == "F":
             return self.rating_max <= fencer.foil_rating <= self.rating_min
         else:
             return self.rating_max <= fencer.sabre_rating <= self.rating_min
@@ -125,6 +143,7 @@ class Result(models.Model):
     Represents a Fencer's results in an event. Currently only place is supported, but other information may
     be tracked in comments.
     """
+
     fencer = models.ForeignKey(Fencer, models.CASCADE)
     event = models.ForeignKey(Event, models.CASCADE)
     place = models.IntegerField()
