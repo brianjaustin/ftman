@@ -112,13 +112,17 @@ class TournamentModelTests(TestCase):
 class EventModelTests(TestCase):
 
     def test_create_event(self):
+        """
+        Verify that saving an event with missing parameters fails but succeeds when the required parameters are present.
+        Also checks that default values for fields are set properly.
+        Returns:
+            None
+        """
         yesterday = timezone.now() - timezone.timedelta(days=1)
         tomorrow = timezone.now() + timezone.timedelta(days=1)
-        Tournament(name='Tournament 1', registration_open=yesterday, registration_close=tomorrow,
-                   registration_fee=0).save()
+        Tournament(name='Tournament 1', registration_open=yesterday, registration_close=tomorrow, registration_fee=0).save()
         event = Event()
         event.name = 'Test Event'
-        event.fee = 0
         event.fencers_max = 15
         event.tournament = Tournament.objects.get(pk=1)
         event.save()
@@ -131,3 +135,45 @@ class EventModelTests(TestCase):
         self.assertEqual(event.fencers_max, 15)
         self.assertEqual(event.tournament.name, 'Tournament 1')
         self.assertEqual(event.fencers.all().count(), 0)
+        with self.assertRaises(IntegrityError):
+            Event().save()
+            Event(name='').save()
+            Event(name='', fencers_max=1).save()
+
+    def test_string_representation(self):
+        """
+        Check that events with their weapon in the title don't have redundant string representations.
+        Returns:
+            None
+        """
+        yesterday = timezone.now() - timezone.timedelta(days=1)
+        tomorrow = timezone.now() + timezone.timedelta(days=1)
+        Tournament(name='Tournament 1', registration_open=yesterday, registration_close=tomorrow, registration_fee=0).save()
+        tournament = Tournament.objects.get(pk=1)
+        Event(name='Epee E and Under', fencers_max=15, tournament=tournament).save()
+        Event(name='Test', fencers_max=15, tournament=tournament, weapon='F', rating_min='E').save()
+        event1 = Event.objects.get(pk=1)
+        event2 = Event.objects.get(pk=2)
+        self.assertEqual(str(event1), event1.name)
+        self.assertEqual(str(event2), "{} [Foil]".format(event2.name))
+
+    def test_can_fence(self):
+        """
+        Test that a fencer can_fence if the event is not full and does not have a rating restriction that prevents it.
+        Returns:
+            None
+        """
+        yesterday = timezone.now() - timezone.timedelta(days=1)
+        tomorrow = timezone.now() + timezone.timedelta(days=1)
+        fencer = get_user_model().objects.create_user(email='test@example.com', username='test', password='change-me')
+        Tournament(name='Tournament 1', registration_open=yesterday, registration_close=tomorrow, registration_fee=0).save()
+        tournament = Tournament.objects.get(pk=1)
+        Event(name='Epee E and Under', fencers_max=15, tournament=tournament).save()
+        Event(name='Foil Test', fencers_max=15, tournament=tournament, weapon='F', rating_min='E').save()
+        Event(name='Sabre Test', fencers_max=-1, tournament=tournament, weapon='S').save()
+        event1 = Event.objects.get(pk=1)
+        event2 = Event.objects.get(pk=2)
+        event3 = Event.objects.get(pk=3)
+        self.assertTrue(event1.can_fence(fencer))
+        self.assertFalse(event2.can_fence(fencer))
+        self.assertFalse(event3.can_fence(fencer))
