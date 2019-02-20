@@ -1,0 +1,4 @@
+black==18.9b0
+Django==2.1.7
+flake8==3.7.6
+pre-commit==1.14.4
