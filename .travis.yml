@@ -8,6 +8,7 @@ install:
 
 script:
   - python manage.py test
+  - coverage run --source=. manage.py test --noinput
 
 after_success:
   - coveralls
