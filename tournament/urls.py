@@ -13,4 +13,10 @@ urlpatterns = [
         views.TournamentDetail.as_view(),
         name="tournament_detail",
     ),
+    # Event model urls
+    path(
+        "event/<int:event_id>/register",
+        views.register_fencer,
+        name="event_register",
+    ),
 ]

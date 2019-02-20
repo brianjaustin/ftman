@@ -35,6 +35,9 @@
         <div class="row">
           <div class="col-sm">{{ event.fencers.count }} / {{ event.fencers_max }} fencers</div>
           <div class="col-sm">${{ event.fee }}</div>
+            {% if user.is_authenticated %}
+                <div class="col-sm"><a href="{% url "event_register" event.pk %}">Register</a></div>
+            {% endif %}
         </div>
         <p>{{ event.description }}</p>
       </div>
