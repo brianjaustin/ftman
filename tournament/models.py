@@ -84,7 +84,7 @@ class Event(models.Model):
     Represents an individual event that is part of a Tournament.
     """
 
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     description = models.TextField()
     weapon = models.CharField(max_length=1, choices=WEAPONS, default="E")
     fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
