@@ -3,3 +3,8 @@
     margin: auto;
     max-width: 330px;
 }
+
+#google-button {
+    display: table;
+    margin: auto;
+}

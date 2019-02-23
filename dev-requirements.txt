@@ -1,6 +1,7 @@
 coverage==4.5.2
 black==18.9b0
 Django==2.1.7
+django-allauth==0.38.0
 django-widget-tweaks==1.4.3
 flake8==3.7.6
 pre-commit==1.14.4
