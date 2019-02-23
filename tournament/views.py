@@ -1,9 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse_lazy
 from django.views import generic
 
-from .models import Tournament, Event
+from .models import Tournament, Event, Fencer
 
 
 class TournamentList(generic.ListView):
@@ -23,6 +25,31 @@ class TournamentDetail(generic.DetailView):
 
     model = Tournament
     context_object_name = "tournament"
+
+
+class FencerProfile(LoginRequiredMixin, generic.UpdateView):
+    """
+    Allows fencers to update their ratings and years earned.
+    """
+
+    model = Fencer
+    fields = [
+        "epee_rating",
+        "epee_year",
+        "foil_rating",
+        "foil_year",
+        "sabre_rating",
+        "sabre_year",
+    ]
+    success_url = reverse_lazy("tournament_list")
+
+    def get_object(self, queryset=None):
+        """
+        Get the current user as the object being edited, so we don't have to specify an id.
+        Returns:
+            The current user
+        """
+        return self.request.user
 
 
 @login_required

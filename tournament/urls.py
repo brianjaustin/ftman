@@ -4,6 +4,10 @@ from . import views
 
 urlpatterns = [
     path("", views.TournamentList.as_view(), name="tournament_list"),
+    # Fencer-related URLs
+    path(
+        "fencer/profile/", views.FencerProfile.as_view(), name="fencer_profile"
+    ),
     # Tournament model urls
     path(
         "tournament/", views.TournamentList.as_view(), name="tournament_list"
