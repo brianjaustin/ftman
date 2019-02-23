@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}My Results{% endblock title %}
+
+{% block content %}
+    <h3>My Results</h3>
+    <ul>
+        {% for result in results %}
+            <li>
+                <a href="{% url 'event_results' result.event.pk %}">{{ result.place|ordinal }} in {{ result.event }}</a>
+            </li>
+        {% empty %}
+            No results yet.
+        {% endfor %}
+    </ul>
+{% endblock content %}

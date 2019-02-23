@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "django.contrib.admin",
     "django.contrib.auth",
+    "django.contrib.humanize",
     "django.contrib.contenttypes",
     "django.contrib.messages",
     "django.contrib.sessions",

@@ -19,10 +19,8 @@
         </div>
         {% if user.is_staff %}
             <div class="col-md">
-                <ul>
-                    <li><a href="{% url 'tournament_export' tournament.pk %}">Export CSV</a></li>
-                    <li><a href="">Add Results</a></li>
-                </ul>
+
+                <li><a href="{% url 'tournament_export' tournament.pk %}">Export CSV</a></li>
             </div>
         {% endif %}
     </div>
@@ -45,9 +43,14 @@
                         <div class="row">
                             <div class="col-sm">{{ event.fencers.count }} / {{ event.fencers_max }} fencers</div>
                             <div class="col-sm">${{ event.fee }}</div>
-                            {% if user.is_authenticated %}
-                                <div class="col-sm"><a href="{% url "event_register" event.pk %}">Register</a></div>
-                            {% endif %}
+                            <div class="col-sm">
+                                <ul>
+                                    {% if user.is_authenticated %}
+                                        <li><a href="{% url 'event_register' event.pk %}">Register</a></li>
+                                    {% endif %}
+                                    <li><a href="{% url 'event_results' event.pk %}">Results</a></li>
+                                </ul>
+                            </div>
                         </div>
                         <p>{{ event.description }}</p>
                     </div>

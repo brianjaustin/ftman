@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Event Results{% endblock title %}
+
+{% block content %}
+    <h3>Results for <em>{{ event }}</em></h3>
+    <ol>
+        {% for result in results %}
+        <li>{{ result.fencer.first_name }} {{ result.fencer.last_name }}</li>
+        {% empty %}
+            Results not yet available.
+        {% endfor %}
+    </ol>
+{% endblock content %}

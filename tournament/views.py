@@ -9,7 +9,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
 
-from .models import Tournament, Event, Fencer
+from .models import Tournament, Event, Fencer, Result
 
 
 class TournamentList(generic.ListView):
@@ -54,6 +54,51 @@ class FencerProfile(LoginRequiredMixin, generic.UpdateView):
             The current user
         """
         return self.request.user
+
+
+class FencerResults(generic.ListView):
+    """
+    Shows results for the currently-logged in fencer.
+    """
+
+    template_name = "tournament/fencer_results.html"
+    context_object_name = "results"
+
+    def get_queryset(self):
+        """
+        Get the results for the currently-logged in user only.
+        Returns:
+            Results for the currently-logged in user
+        """
+        current_fencer = Fencer.objects.get(pk=self.request.user.pk)
+        return Result.objects.filter(fencer=current_fencer).order_by("-pk")
+
+
+class EventResults(generic.ListView):
+    """
+    Shows results for a given event.
+    """
+
+    template_name = "tournament/event_results.html"
+    context_object_name = "results"
+
+    def get_queryset(self):
+        """
+        Get the results for the given event only.
+        Returns:
+            Results for the given event
+        """
+        event = Event.objects.get(pk=self.kwargs["event_id"])
+        return Result.objects.filter(event=event).order_by(
+            "event__name", "place"
+        )
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        """Add both the event and its results to available context."""
+        context = super(EventResults, self).get_context_data(**kwargs)
+        event = Event.objects.get(pk=self.kwargs["event_id"])
+        context["event"] = event
+        return context
 
 
 @login_required
