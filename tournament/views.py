@@ -41,7 +41,7 @@ class FencerProfile(LoginRequiredMixin, generic.UpdateView):
         "sabre_rating",
         "sabre_year",
     ]
-    success_url = reverse_lazy("tournament_list")
+    success_url = reverse_lazy("fencer_profile")
 
     def get_object(self, queryset=None):
         """

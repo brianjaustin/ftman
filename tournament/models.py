@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
@@ -12,6 +13,8 @@ RATINGS = (
 )
 
 WEAPONS = (("E", "Epee"), ("F", "Foil"), ("S", "Sabre"))
+
+current_year = timezone.now().year
 
 
 class Fencer(AbstractUser):
@@ -37,6 +40,32 @@ class Fencer(AbstractUser):
             The fencer/user's username
         """
         return self.username
+
+    def clean(self):
+        """
+        Check that rating is within 4 years of now if the fencer's rating is not unrated.
+        Returns:
+            None
+        """
+        super(Fencer, self).clean()
+        if self.epee_rating != "U" and (
+            self.epee_year is None
+            or self.epee_year < current_year - 4
+            or self.epee_year > current_year
+        ):
+            raise ValidationError("Invalid year for non-U epee rating.")
+        if self.foil_rating != "U" and (
+            self.foil_year is None
+            or self.foil_year < current_year - 4
+            or self.foil_year > current_year
+        ):
+            raise ValidationError("Invalid year for non-U foil rating.")
+        if self.sabre_rating != "U" and (
+            self.sabre_year is None
+            or self.sabre_year < current_year - 4
+            or self.sabre_year > current_year
+        ):
+            raise ValidationError("Invalid year for non-U sabre rating.")
 
 
 class Tournament(models.Model):
