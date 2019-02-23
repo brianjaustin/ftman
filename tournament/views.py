@@ -1,6 +1,10 @@
+import csv
+
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
@@ -72,3 +76,48 @@ def register_fencer(request, event_id):
     else:
         messages.error(request, "Failed to register for {}".format(event))
     return redirect("tournament_detail", pk=event.tournament.pk)
+
+
+@staff_member_required
+def export_tournament(request, tournament_id):
+    """
+    Exports the registrations for each event in a tournament. The CSV exported contains fencers' names, events, and
+    ratings.
+    Args:
+        request: Django request object
+        tournament_id: the tournament whose registrations to export
+
+    Returns:
+
+    """
+    response = HttpResponse(content_type="text/csv")
+    response[
+        "Content-Disposition"
+    ] = "attachment; filename='tournament_export.csv'"
+    writer = csv.writer(response)
+    writer.writerow(["First Name", "Last Name", "Event", "Weapon Rating"])
+
+    tournament = Tournament.objects.get(pk=tournament_id)
+    events = tournament.event_set.all()
+    for event in events:
+        for fencer in event.fencers.all():
+            if event.weapon == "E":
+                rating = fencer.epee_rating
+                year = fencer.epee_year
+            elif event.weapon == "F":
+                rating = fencer.foil_rating
+                year = fencer.foil_year
+            else:
+                rating = fencer.sabre_rating
+                year = fencer.sabre_year
+
+            writer.writerow(
+                [
+                    fencer.first_name,
+                    fencer.last_name,
+                    event.name,
+                    "{}{}".format(rating, year),
+                ]
+            )
+
+    return response
