@@ -3,6 +3,7 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.utils import timezone
 
+from tournament.factories import FencerFactory, TournamentFactory, EventFactory
 from .models import Tournament, Event
 
 
@@ -13,18 +14,18 @@ class FencerModelTests(TestCase):
         Returns:
             None
         """
-        user_model = get_user_model()
-        fencer = user_model.objects.create_user(
-            email="test@example.com", username="test", password="change-me"
-        )
-        self.assertEqual(fencer.email, "test@example.com")
-        self.assertEqual(fencer.username, "test")
+        # user_model = get_user_model()
+        # fencer = user_model.objects.create_user(
+        #    email="test@example.com", username="test", password="change-me"
+        # )
+        fencer = FencerFactory()
         self.assertTrue(fencer.is_active)
         self.assertFalse(fencer.is_staff)
         self.assertFalse(fencer.is_superuser)
         self.assertEqual(fencer.foil_rating, "U")
         self.assertEqual(fencer.epee_rating, "U")
         self.assertEqual(fencer.sabre_rating, "U")
+        user_model = get_user_model()
         with self.assertRaises(TypeError):
             user_model.objects.create_user()
             user_model.objects.create_user(email="")
@@ -66,13 +67,7 @@ class TournamentModelTests(TestCase):
         Returns:
             None
         """
-        tournament = Tournament()
-        tournament.name = "Test Tournament"
-        tournament.registration_open = timezone.now() - timezone.timedelta(
-            days=1
-        )
-        tournament.registration_close = timezone.now()
-        tournament.registration_fee = 0
+        tournament = TournamentFactory()
         tournament.save()
         with self.assertRaises(IntegrityError):
             bad_tournament = Tournament()
@@ -91,12 +86,9 @@ class TournamentModelTests(TestCase):
         Returns:
             None
         """
-        tournament = Tournament(name="Test Tournament")
-        tournament.registration_open = timezone.now() - timezone.timedelta(
-            hours=2
-        )
-        tournament.registration_close = timezone.now() + timezone.timedelta(
-            hours=1
+        tournament = TournamentFactory(
+            registration_open=timezone.now() - timezone.timedelta(hours=2),
+            registration_close=timezone.now() + timezone.timedelta(hours=1),
         )
         self.assertTrue(tournament.can_register())
         self.assertFalse(
@@ -119,23 +111,20 @@ class TournamentModelTests(TestCase):
         yesterday = timezone.now() - timezone.timedelta(days=1)
         now = timezone.now()
         tomorrow = timezone.now() + timezone.timedelta(days=1)
-        Tournament(
+        TournamentFactory(
             name="Tournament 1",
             registration_open=yesterday,
             registration_close=tomorrow,
-            registration_fee=0,
         ).save()
-        Tournament(
+        TournamentFactory(
             name="Tournament 2",
             registration_open=now,
             registration_close=tomorrow,
-            registration_fee=0,
         ).save()
-        Tournament(
+        TournamentFactory(
             name="Tournament 3",
             registration_open=yesterday,
             registration_close=now,
-            registration_fee=0,
         ).save()
         tournaments = Tournament.objects.all()
         self.assertEqual(tournaments[0].name, "Tournament 2")
@@ -151,27 +140,12 @@ class EventModelTests(TestCase):
         Returns:
             None
         """
-        yesterday = timezone.now() - timezone.timedelta(days=1)
-        tomorrow = timezone.now() + timezone.timedelta(days=1)
-        Tournament(
-            name="Tournament 1",
-            registration_open=yesterday,
-            registration_close=tomorrow,
-            registration_fee=0,
-        ).save()
-        event = Event()
-        event.name = "Test Event"
-        event.fencers_max = 15
-        event.tournament = Tournament.objects.get(pk=1)
-        event.save()
+        EventFactory().save()
         event = Event.objects.get(pk=1)
-        self.assertEqual(event.name, "Test Event")
         self.assertEqual(event.weapon, "E")
         self.assertEqual(event.fee, 0)
         self.assertEqual(event.rating_min, "U")
         self.assertEqual(event.rating_max, "A")
-        self.assertEqual(event.fencers_max, 15)
-        self.assertEqual(event.tournament.name, "Tournament 1")
         self.assertEqual(event.fencers.all().count(), 0)
         with self.assertRaises(IntegrityError):
             Event().save()
@@ -184,25 +158,8 @@ class EventModelTests(TestCase):
         Returns:
             None
         """
-        yesterday = timezone.now() - timezone.timedelta(days=1)
-        tomorrow = timezone.now() + timezone.timedelta(days=1)
-        Tournament(
-            name="Tournament 1",
-            registration_open=yesterday,
-            registration_close=tomorrow,
-            registration_fee=0,
-        ).save()
-        tournament = Tournament.objects.get(pk=1)
-        Event(
-            name="Epee E and Under", fencers_max=15, tournament=tournament
-        ).save()
-        Event(
-            name="Test",
-            fencers_max=15,
-            tournament=tournament,
-            weapon="F",
-            rating_min="E",
-        ).save()
+        EventFactory(name="Epee E and Under", fencers_max=15).save()
+        EventFactory(name="Test", weapon="F", rating_min="E").save()
         event1 = Event.objects.get(pk=1)
         event2 = Event.objects.get(pk=2)
         self.assertEqual(str(event1), event1.name)
@@ -214,34 +171,10 @@ class EventModelTests(TestCase):
         Returns:
             None
         """
-        yesterday = timezone.now() - timezone.timedelta(days=1)
-        tomorrow = timezone.now() + timezone.timedelta(days=1)
-        fencer = get_user_model().objects.create_user(
-            email="test@example.com", username="test", password="change-me"
-        )
-        Tournament(
-            name="Tournament 1",
-            registration_open=yesterday,
-            registration_close=tomorrow,
-            registration_fee=0,
-        ).save()
-        tournament = Tournament.objects.get(pk=1)
-        Event(
-            name="Epee E and Under", fencers_max=15, tournament=tournament
-        ).save()
-        Event(
-            name="Foil Test",
-            fencers_max=15,
-            tournament=tournament,
-            weapon="F",
-            rating_min="E",
-        ).save()
-        Event(
-            name="Sabre Test",
-            fencers_max=-1,
-            tournament=tournament,
-            weapon="S",
-        ).save()
+        fencer = FencerFactory()
+        EventFactory(name="Epee E and Under").save()
+        EventFactory(name="Foil Test", weapon="F", rating_min="E").save()
+        EventFactory(name="Sabre Test", fencers_max=0, weapon="S").save()
         event1 = Event.objects.get(pk=1)
         event2 = Event.objects.get(pk=2)
         event3 = Event.objects.get(pk=3)
