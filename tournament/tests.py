@@ -226,3 +226,69 @@ class TournamentListTest(TestCase):
         self.assertContains(response, "Profile")
         self.assertContains(response, "My Results")
         self.assertContains(response, "Logout")
+
+
+class TournamentDetailTest(TestCase):
+    def test_nonexistent_detail(self):
+        """
+        Test that accessing the detail for a non-existent tournament results in a 404 response code.
+        Returns:
+            None
+        """
+        response = self.client.get(
+            reverse("tournament_detail", kwargs={"pk": 1})
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_no_events_detail(self):
+        """
+        Test that tournaments with no events display a no events message.
+        Returns:
+            None
+        """
+        TournamentFactory().save()
+        response = self.client.get(
+            reverse("tournament_detail", kwargs={"pk": 1})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Registration Open:")
+        self.assertContains(response, "Registration Close:")
+        self.assertContains(response, "Registration Fee:")
+        self.assertContains(
+            response, "This tournament does not have any events."
+        )
+
+    def test_anonymous_detail(self):
+        """
+        Check that anonymous users can see tournament detail but not a registration link.
+        Returns:
+            None
+        """
+        EventFactory(name="Test Event", fencers_max=15).save()
+        response = self.client.get(
+            reverse("tournament_detail", kwargs={"pk": 1})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Test Event")
+        self.assertContains(response, "0 / 15 fencers")
+        self.assertContains(response, "$0.00")
+        self.assertContains(response, '<a href="/event/1/results">')
+        self.assertNotContains(response, '<a href="/event/1/register">')
+
+    def test_authenticated_detail(self):
+        """
+        Verify that authenticated users _can_ see a registration link for events.
+        Returns:
+            None
+        """
+        EventFactory().save()
+        user_model = get_user_model()
+        user_model.objects.create_user(
+            username="test", email="test@example.com", password="test"
+        )
+        self.client.login(username="test", password="test")
+        response = self.client.get(
+            reverse("tournament_detail", kwargs={"pk": 1})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<a href="/event/1/register">')
