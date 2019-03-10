@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 
 from tournament.factories import FencerFactory, TournamentFactory, EventFactory
@@ -14,10 +15,6 @@ class FencerModelTests(TestCase):
         Returns:
             None
         """
-        # user_model = get_user_model()
-        # fencer = user_model.objects.create_user(
-        #    email="test@example.com", username="test", password="change-me"
-        # )
         fencer = FencerFactory()
         self.assertTrue(fencer.is_active)
         self.assertFalse(fencer.is_staff)
@@ -181,3 +178,51 @@ class EventModelTests(TestCase):
         self.assertTrue(event1.can_fence(fencer))
         self.assertFalse(event2.can_fence(fencer))
         self.assertFalse(event3.can_fence(fencer))
+
+
+class TournamentListTest(TestCase):
+    def test_empty_tournament_list(self):
+        """
+        Verify that the list of tournaments shows a message when none are found in the database.
+        Returns:
+            None
+        """
+        response = self.client.get(reverse("tournament_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No tournaments found.")
+        self.assertQuerysetEqual(response.context["tournaments"], [])
+        self.assertContains(response, "Login")
+
+    def test_tournament_list_anonymous(self):
+        """
+        Test that the tournament page shows a tournament when present in the database.
+        Returns:
+            None
+        """
+        TournamentFactory(name="Test Tournament").save()
+        response = self.client.get(reverse("tournament_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, '<a href="/tournament/1">Test Tournament</a>'
+        )
+        self.assertQuerysetEqual(
+            response.context["tournaments"], ["<Tournament: Test Tournament>"]
+        )
+        self.assertContains(response, "Login")
+
+    def test_tournament_list_authenticated(self):
+        """
+        Check that the correct options are available when logged in.
+        Returns:
+            None
+        """
+        user_model = get_user_model()
+        user_model.objects.create_user(
+            username="test", email="test@example.com", password="test"
+        )
+        self.client.login(username="test", password="test")
+        response = self.client.get(reverse("tournament_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Profile")
+        self.assertContains(response, "My Results")
+        self.assertContains(response, "Logout")
