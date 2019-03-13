@@ -4,6 +4,7 @@ python:
 install:
 - pip install -r dev-requirements.txt
 script:
+- python manage.py collectstatic
 - python manage.py test
 - coverage run --source=. manage.py test --noinput
 after_success:
