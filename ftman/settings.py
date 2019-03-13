@@ -155,5 +155,5 @@ LOGOUT_REDIRECT_URL = "tournament_list"
 SITE_ID = 1
 
 # Activate Django-Heroku (this hack ensures that it only happens when actually on Heroku).
-if "/app" in os.environ["HOME"]:
+if "IS_HEROKU" in os.environ:
     django_heroku.settings(locals())
