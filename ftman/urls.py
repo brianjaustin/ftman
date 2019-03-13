@@ -6,7 +6,7 @@ from ftman import views
 urlpatterns = [
     # ACME URL for LetsEncrypt
     path(
-        ".well-known/acme-challenge/",
+        ".well-known/acme-challenge/<str:_>",
         views.acme_challenge,
         name="acme-challenge",
     ),
