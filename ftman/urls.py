@@ -1,7 +1,15 @@
 from django.contrib import admin
 from django.urls import include, path
 
+from ftman import views
+
 urlpatterns = [
+    # ACME URL for LetsEncrypt
+    path(
+        ".well-known/acme-challenge/",
+        views.acme_challenge,
+        name="acme-challenge",
+    ),
     # Tournament URLs
     path("", include("tournament.urls")),
     # Authentication URLs

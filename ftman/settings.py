@@ -154,6 +154,9 @@ LOGOUT_REDIRECT_URL = "tournament_list"
 
 SITE_ID = 1
 
+# Used for LetsEncrypt SSL
+ACME_CHALLENGE_CONTENT = os.environ.get("ACME_CHALLENGE_CONTENT", None)
+
 # Activate Django-Heroku (this hack ensures that it only happens when actually on Heroku).
 if "IS_HEROKU" in os.environ:
     django_heroku.settings(locals())
