@@ -1,0 +1,9 @@
+# .coveragerc to control coverage.py
+[run]
+omit =
+    */venv/*
+    */migrations/*
+    */wgsi.py
+    */manage.py
+    */settings.py
+    */tests.py

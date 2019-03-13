@@ -5,4 +5,11 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
-Fencing tournament management software. Currently in development, more documentation to come.
+Web application for managing fencing tournaments. I designed this for my university's fencing club, Northeastern
+University Blades. It's still a work-in-progress, so proceed carefully please. I welcome issues/pull request for new
+features and bug fixes.
+
+### Development Setup
+1. Ensure you are using Python 3 (I recommend using a virtual environment).
+2. Install dependencies with `pip install -r dev-requirements.txt`
+3. Setup pre-commit hooks `pre-commit install`
