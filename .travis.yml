@@ -4,8 +4,8 @@ python:
 install:
 - pip install -r dev-requirements.txt
 before_script:
-  - mkdir -p staticfiles
-  - python manage.py collectstatic --noinput
+- mkdir -p staticfiles
+- python manage.py collectstatic --noinput
 script:
 - python manage.py test
 - coverage run --source=. manage.py test --noinput
@@ -14,7 +14,7 @@ after_success:
 deploy:
   provider: heroku
   api_key:
-    secure: MxKe+GtcAx4jLcXGq3j3BMVspWMbVaEaPZQezBjWu/PXD6DUWkZ/Zz5sXL3xI3/4uFNuVFqVAMu05cbalzN7OD4++HIO2Ib9fIEC1Kt7dvWYDWbQ1lfx0QMMd44uj3cNoj865SjSHzoweLQNUW6AavY4bDiTHToTwM8x3GiXLJqUmM7w7Gz9iDBe6fi2tMpSCly55jSKzc1rAuXWYfLzeXLy0qVtrnjaUUymxR6uQfns3dm7+UNfUZ3TX4knbju4RPAmqXed1w6VRCV4E72A6oVgjOB6lNm0cQCWyNiWWIU/5r1wY9sa5WY7x3N01iF1aOswERNb5VJH3yML2Rq3b5cwGgDaG0qQFaLVYtgzSdGBmqVMetLI8VG43WLS83T5hHqaDRxOQqtRQaV0nIOSyeowE9/6zvAnPe/nIn0KwU2JNdRx1HoUR281LSrUWG67saWsVcYM+nwHwDq7zX97C4d5vghjzZmyBoKE8acpvKg3f8yEy/N4jSUue5LMXhEdyCHa9RZZRF/mTCs49w7DxqaJ8Cswq8GuyeQEF0uXELDrIp5gMQBCfyJBiwgbzXxPHEfuGZMxvr7PqZ9cKhXshW5XQsyyVN3GVWChForez/JnZsjovz4jPNH7c67IgZaIgoFDtxQITU92GHZO4oRPs2vBAW0NZKoqjvxZBf2wl7c=
+    secure: aOpv8jKNzxHn59wDxhKS3mCZrsaP2r5pAWIRfiobSc1tffja3a0bDvhFwo1usWPCrAauAHr521y12Fosd+h+pCwlOgwhmYVu18GDmTDJxnyqbOkW4/+xq4T1HWFaTLrBiD2lbks6srO48Zp9QtSa/dInEg7JYa4sJ18FvguIF+DxNrshQybXMOc6znTkX0BYRrpAI0NJx0mDU39+K77JBgYHpKCNrOqIF1Fav3KE/EypI66nPPlRT5fOZCl8SitdkjEO+qu38BLg4lQgBXvj96XLHRdUDRVQjL0Wtofj+Iqba1xsPy65xq4O+XKMqYBo/k4bgxtOBVIq8JMs75aKvNyodYSwHClLwRvU0eWhXcS3Xxsc7VsEeX5wxHBa63zVPou+elE2ANP//mWFqOGK+RS8mrWjiaVLGgcB3Mlk7sExRj+SylKCDuocFYmoW5lz04qfTYPt1HigodDwVCccWO1zXnJJUUM320E3M2Yp7duSbrEmacO0pv5OMXpEGCeNl2pto9LpsI9xhv2tOH7LgbtBRpCBq0dBzRxER4v0xvAVbi7abe2Fg3BmHjVXn9lGa94xdvbEG5S4sCl6mCcerEDpq+R9MEzXziJogmQ2pW/9y++KtpTLkWN1wIyly9ed3psF4c6nUPu9nCqJQ0WM/W4C+kK8/foiw3h+yLxwTaY=
   app: nublades
   on:
     repo: brianjaustin/ftman
