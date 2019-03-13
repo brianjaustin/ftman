@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import dj_database_url
+import django_heroku
 
 from django.contrib.messages import constants as messages
 
@@ -84,12 +86,8 @@ WSGI_APPLICATION = "ftman.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
+    "default": dj_database_url.config(conn_max_age=600, ssl_require=True)
 }
 
 
@@ -144,11 +142,14 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
+# Authentication-related settings
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
-
 LOGIN_URL = "/users/login"
 LOGIN_REDIRECT_URL = "tournament_list"
 LOGOUT_REDIRECT_URL = "tournament_list"
 
 SITE_ID = 1
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())

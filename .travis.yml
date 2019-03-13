@@ -1,14 +1,17 @@
 language: python
 python:
-  - "3.6"
-
-# Install requirements
+- '3.6'
 install:
-  - pip install -r dev-requirements.txt
-
+- pip install -r dev-requirements.txt
 script:
-  - python manage.py test
-  - coverage run --source=. manage.py test --noinput
-
+- python manage.py test
+- coverage run --source=. manage.py test --noinput
 after_success:
-  - coveralls
+- coveralls
+deploy:
+  provider: heroku
+  api_key:
+    secure: MxKe+GtcAx4jLcXGq3j3BMVspWMbVaEaPZQezBjWu/PXD6DUWkZ/Zz5sXL3xI3/4uFNuVFqVAMu05cbalzN7OD4++HIO2Ib9fIEC1Kt7dvWYDWbQ1lfx0QMMd44uj3cNoj865SjSHzoweLQNUW6AavY4bDiTHToTwM8x3GiXLJqUmM7w7Gz9iDBe6fi2tMpSCly55jSKzc1rAuXWYfLzeXLy0qVtrnjaUUymxR6uQfns3dm7+UNfUZ3TX4knbju4RPAmqXed1w6VRCV4E72A6oVgjOB6lNm0cQCWyNiWWIU/5r1wY9sa5WY7x3N01iF1aOswERNb5VJH3yML2Rq3b5cwGgDaG0qQFaLVYtgzSdGBmqVMetLI8VG43WLS83T5hHqaDRxOQqtRQaV0nIOSyeowE9/6zvAnPe/nIn0KwU2JNdRx1HoUR281LSrUWG67saWsVcYM+nwHwDq7zX97C4d5vghjzZmyBoKE8acpvKg3f8yEy/N4jSUue5LMXhEdyCHa9RZZRF/mTCs49w7DxqaJ8Cswq8GuyeQEF0uXELDrIp5gMQBCfyJBiwgbzXxPHEfuGZMxvr7PqZ9cKhXshW5XQsyyVN3GVWChForez/JnZsjovz4jPNH7c67IgZaIgoFDtxQITU92GHZO4oRPs2vBAW0NZKoqjvxZBf2wl7c=
+  app: nublades
+  on:
+    repo: brianjaustin/ftman
