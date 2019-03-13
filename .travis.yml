@@ -4,8 +4,8 @@ python:
 install:
 - pip install -r dev-requirements.txt
 before_script:
-  - rm -rf staticfiles
-  - python manage.py collectstatic
+  - mkdir -p static
+  - python manage.py collectstatic --noinput
 script:
 - python manage.py test
 - coverage run --source=. manage.py test --noinput
