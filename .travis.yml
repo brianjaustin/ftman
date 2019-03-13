@@ -4,9 +4,10 @@ python:
 install:
 - pip install -r dev-requirements.txt
 before_script:
-  - mkdir -p static
+  - mkdir -p staticfiles
   - python manage.py collectstatic --noinput
 script:
+- python manage.py collectstatic
 - python manage.py test
 - coverage run --source=. manage.py test --noinput
 after_success:
