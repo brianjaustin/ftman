@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.urls import reverse
@@ -55,6 +56,54 @@ class FencerModelTests(TestCase):
             user_model.objects.create_superuser(
                 email="", username="", password=""
             )
+
+    def test_clean_epee_rating(self):
+        """
+        Test that out-of-bounds epee rating years are rejected by model cleaning.
+        Returns:
+            None
+        """
+        fencer = FencerFactory()
+        fencer.epee_rating = "E"
+        self.assertRaises(ValidationError, fencer.clean)
+        fencer.epee_year = 2014
+        self.assertRaises(ValidationError, fencer.clean)
+        fencer.epee_year = 2020
+        self.assertRaises(ValidationError, fencer.clean)
+        fencer.epee_year = 2018
+        fencer.clean()
+
+    def test_clean_foil_rating(self):
+        """
+        Check that out-of-bounds foil rating years are rejected by model cleaning.
+        Returns:
+            None
+        """
+        fencer = FencerFactory()
+        fencer.foil_rating = "A"
+        self.assertRaises(ValidationError, fencer.clean)
+        fencer.foil_year = 2014
+        self.assertRaises(ValidationError, fencer.clean)
+        fencer.foil_year = 2020
+        self.assertRaises(ValidationError, fencer.clean)
+        fencer.foil_year = 2017
+        fencer.clean()
+
+    def test_clean_sabre_rating(self):
+        """
+        Check that out-of-bounds sabre rating years are rejected by model cleaning.
+        Returns:
+            None
+        """
+        fencer = FencerFactory()
+        fencer.sabre_rating = "C"
+        self.assertRaises(ValidationError, fencer.clean)
+        fencer.sabre_year = 2014
+        self.assertRaises(ValidationError, fencer.clean)
+        fencer.sabre_year = 2020
+        self.assertRaises(ValidationError, fencer.clean)
+        fencer.sabre_year = 2015
+        fencer.clean()
 
 
 class TournamentModelTests(TestCase):
