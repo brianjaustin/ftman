@@ -5,8 +5,12 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from tournament.factories import FencerFactory, TournamentFactory, EventFactory
-from .models import Tournament, Event
+from .models import Event
+from .models import Tournament
+from tournament.factories import EventFactory
+from tournament.factories import FencerFactory
+from tournament.factories import ResultFactory
+from tournament.factories import TournamentFactory
 
 
 class FencerModelTests(TestCase):
@@ -56,6 +60,17 @@ class FencerModelTests(TestCase):
             user_model.objects.create_superuser(
                 email="", username="", password=""
             )
+
+    def test_fencer_string(self):
+        """
+        Verifies that fencer string representation is username if present, otherwise email.
+        Returns:
+            None
+        """
+        username_fencer = FencerFactory(username="test")
+        email_fencer = FencerFactory(email="test@example.com")
+        self.assertEqual(username_fencer.__str__(), "test")
+        self.assertEqual(email_fencer.__str__(), "test@example.com")
 
     def test_clean_epee_rating(self):
         """
@@ -221,12 +236,30 @@ class EventModelTests(TestCase):
         EventFactory(name="Epee E and Under").save()
         EventFactory(name="Foil Test", weapon="F", rating_min="E").save()
         EventFactory(name="Sabre Test", fencers_max=0, weapon="S").save()
+        EventFactory(name="Sabre Test", fencers_max=2, weapon="S").save()
         event1 = Event.objects.get(pk=1)
         event2 = Event.objects.get(pk=2)
         event3 = Event.objects.get(pk=3)
+        event4 = Event.objects.get(pk=4)
         self.assertTrue(event1.can_fence(fencer))
         self.assertFalse(event2.can_fence(fencer))
         self.assertFalse(event3.can_fence(fencer))
+        self.assertTrue(event4.can_fence(fencer))
+
+
+class ResultModelTests(TestCase):
+    def test_result_string(self):
+        """
+        Test the string representation of results (fencer username in event).
+        Returns:
+            None
+        """
+        result = ResultFactory()
+        fencer_name = result.fencer.email
+        event = result.event
+        self.assertEqual(
+            result.__str__(), "{} in {}".format(fencer_name, event)
+        )
 
 
 class TournamentListTest(TestCase):

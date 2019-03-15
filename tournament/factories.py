@@ -3,7 +3,10 @@ import random
 import factory
 from django.utils import timezone
 
-from .models import Fencer, Tournament, Event
+from .models import Event
+from .models import Fencer
+from .models import Result
+from .models import Tournament
 
 
 class FencerFactory(factory.DjangoModelFactory):
@@ -47,3 +50,17 @@ class EventFactory(factory.DjangoModelFactory):
     name = factory.Faker("text")
     fencers_max = random.randint(1, 100)
     tournament = factory.SubFactory(TournamentFactory)
+
+
+class ResultFactory(factory.DjangoModelFactory):
+    """
+    Factory used for tests involving the Result model.
+    """
+
+    class Meta:
+        model = Result
+
+    fencer = factory.SubFactory(FencerFactory)
+    event = factory.SubFactory(EventFactory)
+    place = 1
+    comments = ""

@@ -39,7 +39,7 @@ class Fencer(AbstractUser):
         Returns:
             The fencer/user's username
         """
-        return self.username
+        return self.username if self.username else self.email
 
     def clean(self):
         """
