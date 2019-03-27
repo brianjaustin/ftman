@@ -1,9 +1,13 @@
 # .coveragerc to control coverage.py
 [run]
+source =
+    tournament
+    ftman
 omit =
     */venv/*
     */migrations/*
     */wgsi.py
+    ftman/wsgi.py
     */manage.py
     */settings.py
     */tests.py
