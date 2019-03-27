@@ -169,7 +169,7 @@ def export_tournament(request, tournament_id):
     response = HttpResponse(content_type="text/csv")
     response[
         "Content-Disposition"
-    ] = "attachment; filename='tournament_export.csv'"
+    ] = "attachment; filename=tournament_export.csv"
     writer = csv.writer(response)
     writer.writerow(["First Name", "Last Name", "Event", "Weapon Rating"])
 
