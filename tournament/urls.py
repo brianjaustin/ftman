@@ -32,6 +32,11 @@ urlpatterns = [
         name="event_register",
     ),
     path(
+        "event/<int:event_id>/unregister",
+        views.unregister_fencer,
+        name="event_unregister",
+    ),
+    path(
         "event/<int:event_id>/results",
         views.EventResults.as_view(),
         name="event_results",

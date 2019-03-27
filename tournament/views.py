@@ -5,11 +5,15 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views import generic
 
-from .models import Tournament, Event, Fencer, Result
+from .models import Event
+from .models import Fencer
+from .models import Result
+from .models import Tournament
 
 
 class TournamentList(generic.ListView):
@@ -120,6 +124,33 @@ def register_fencer(request, event_id):
         )
     else:
         messages.error(request, "Failed to register for {}".format(event))
+    return redirect("tournament_detail", pk=event.tournament.pk)
+
+
+@login_required
+def unregister_fencer(request, event_id):
+    """
+    Delete the registration for the current fencer (user) for the given tournament.
+    Args:
+        request: Django request object, used to retrieve the current user
+        event_id: the event to unregister the current user from
+    Returns:
+        None
+    """
+    event = get_object_or_404(Event, pk=event_id)
+    fencer = request.user
+    if fencer in event.fencers.all():
+        event.fencers.remove(fencer)
+        messages.success(
+            request, "Registration deleted successfully for {}".format(event)
+        )
+    else:
+        messages.error(
+            request,
+            "Unable to delete registration for {}; registration not found".format(
+                event
+            ),
+        )
     return redirect("tournament_detail", pk=event.tournament.pk)
 
 

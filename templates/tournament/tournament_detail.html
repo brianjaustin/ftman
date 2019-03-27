@@ -46,7 +46,11 @@
                             <div class="col-sm">
                                 <ul>
                                     {% if user.is_authenticated %}
-                                        <li><a href="{% url 'event_register' event.pk %}">Register</a></li>
+                                        {% if user in event.fencers.all %}
+                                            <li><a href="{% url 'event_unregister' event.pk %}">Unregister</a></li>
+                                        {% else %}
+                                            <li><a href="{% url 'event_register' event.pk %}">Register</a></li>
+                                        {% endif %}
                                     {% endif %}
                                     <li><a href="{% url 'event_results' event.pk %}">Results</a></li>
                                 </ul>
