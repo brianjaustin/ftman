@@ -387,3 +387,28 @@ class TournamentDetailTest(TestCase):
         )
         self.assertNotContains(response, '<a href="/event/1/register">')
         self.assertContains(response, '<a href="/event/1/unregister">')
+
+
+class FencerProfileTest(TestCase):
+    def test_get_anonymous(self):
+        """
+        Check that anonymous users are redirected when trying to access the profile page.
+        Returns:
+            None
+        """
+        response = self.client.get(reverse("fencer_profile"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_get_logged_in(self):
+        """
+        Verify that authenticated users can access the profile page.
+        Returns:
+            None
+        """
+        user_model = get_user_model()
+        user_model.objects.create_user(
+            username="test", email="test@example.com", password="test"
+        )
+        self.client.login(username="test", password="test")
+        response = self.client.get(reverse("fencer_profile"))
+        self.assertEqual(response.status_code, 200)
