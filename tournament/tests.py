@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from .models import Event
+from .models import Fencer
 from .models import Tournament
 from tournament.factories import EventFactory
 from tournament.factories import FencerFactory
@@ -356,10 +357,11 @@ class TournamentDetailTest(TestCase):
         self.assertContains(response, "$0.00")
         self.assertContains(response, '<a href="/event/1/results">')
         self.assertNotContains(response, '<a href="/event/1/register">')
+        self.assertNotContains(response, '<a href="/event/1/unregister">')
 
     def test_authenticated_detail(self):
         """
-        Verify that authenticated users _can_ see a registration link for events.
+        Verify that authenticated users _can_ see a registration/un-registration link for events.
         Returns:
             None
         """
@@ -369,8 +371,19 @@ class TournamentDetailTest(TestCase):
             username="test", email="test@example.com", password="test"
         )
         self.client.login(username="test", password="test")
+        # Users who haven't registered should see a registration link
         response = self.client.get(
             reverse("tournament_detail", kwargs={"pk": 1})
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<a href="/event/1/register">')
+        self.assertNotContains(response, '<a href="/event/1/unregister">')
+        # Users who have registered should see an un-register link
+        event = Event.objects.get(pk=1)
+        event.fencers.add(Fencer.objects.get(username="test"))
+        event.save()
+        response = self.client.get(
+            reverse("tournament_detail", kwargs={"pk": 1})
+        )
+        self.assertNotContains(response, '<a href="/event/1/register">')
+        self.assertContains(response, '<a href="/event/1/unregister">')
