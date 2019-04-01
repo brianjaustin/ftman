@@ -18,3 +18,4 @@ deploy:
   app: nublades
   on:
     repo: brianjaustin/ftman
+    branch: master
