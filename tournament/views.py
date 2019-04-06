@@ -74,7 +74,7 @@ class FencerResults(generic.ListView):
         Returns:
             Results for the currently-logged in user
         """
-        current_fencer = Fencer.objects.get(pk=self.request.user.pk)
+        current_fencer = get_object_or_404(Fencer, pk=self.request.user.pk)
         return Result.objects.filter(fencer=current_fencer).order_by("-pk")
 
 
