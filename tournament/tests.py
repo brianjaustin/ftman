@@ -412,3 +412,50 @@ class FencerProfileTest(TestCase):
         self.client.login(username="test", password="test")
         response = self.client.get(reverse("fencer_profile"))
         self.assertEqual(response.status_code, 200)
+
+
+class FencerResultsTest(TestCase):
+    def test_get_anonymous(self):
+        """
+        Anonymous users should be greeted with a 404 error if they attempt to edit their profile.
+        Returns:
+            None
+        """
+        response = self.client.get(reverse("fencer_results"))
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_no_results(self):
+        """
+        Users without results should not see any results.
+        Returns:
+            None
+        """
+        user_model = get_user_model()
+        user_model.objects.create_user(
+            username="test", email="test@example.com", password="test"
+        )
+        self.client.login(username="test", password="test")
+        response = self.client.get(reverse("fencer_results"))
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context["results"], [])
+
+    def test_get_with_results(self):
+        """
+        Users with results should be able to see their own, but not others'.
+        Returns:
+            None
+        """
+        user_model = get_user_model()
+        user_model.objects.create_user(
+            username="test", email="test@example.com", password="test"
+        )
+        user_model.objects.create_user(
+            username="test2", email="test@example.net", password="fencer123"
+        )
+        ResultFactory(fencer=user_model.objects.get(pk=1), place=1).save()
+        ResultFactory(fencer=user_model.objects.get(pk=1), place=4).save()
+        ResultFactory(fencer=user_model.objects.get(pk=2), place=3).save()
+        self.client.login(username="test", password="test")
+        response = self.client.get(reverse("fencer_results"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["results"].count(), 2)
