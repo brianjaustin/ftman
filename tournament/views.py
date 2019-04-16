@@ -192,7 +192,7 @@ def export_tournament(request, tournament_id):
                     fencer.first_name,
                     fencer.last_name,
                     event.name,
-                    "{}{}".format(rating, year),
+                    "{}{}".format(rating, "" if year is None else year),
                 ]
             )
 
