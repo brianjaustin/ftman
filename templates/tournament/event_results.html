@@ -6,7 +6,7 @@
     <h3>Results for <em>{{ event }}</em></h3>
     <ol>
         {% for result in results %}
-        <li>{{ result.fencer.first_name }} {{ result.fencer.last_name }}</li>
+        <li value="{{ result.place }}">{{ result.fencer.first_name }} {{ result.fencer.last_name }}</li>
         {% empty %}
             Results not yet available.
         {% endfor %}
