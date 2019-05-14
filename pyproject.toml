@@ -14,3 +14,31 @@ exclude = '''
   | dist
 )/
 '''
+
+[tool.poetry]
+name = "ftman"
+version = "0.1.0"
+description = "Simple web application to manage tournament sign-up for a single fencing club."
+authors = ["Brian Austin <brianjaustin@gmail.com>"]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+dj-database-url = "^0.5.0"
+Django = "^2.2"
+django-allauth = "^0.39.1"
+django-heroku = "^0.3.1"
+django-widget-tweaks = "^1.4"
+gunicorn = "^19.9"
+psycopg2 = "^2.8"
+
+[tool.poetry.dev-dependencies]
+coverage = "^4.5"
+factory_boy = "^2.12"
+flake8 = "^3.7"
+pre-commit = "^1.16"
+black = {version = "^18.3-alpha.0",allows-prereleases = true}
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
