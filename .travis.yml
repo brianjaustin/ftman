@@ -2,13 +2,12 @@ language: python
 python:
 - '3.6'
 install:
-- pip install pipenv
-- pipenv sync --dev
+- pip install -r dev-requirements.txt
 before_script:
 - mkdir -p staticfiles
-- pipenv run ./manage.py collectstatic --noinput
+- python manage.py collectstatic --noinput
 script:
-- pipenv run ./manage.py test
+- python manage.py test
 - coverage run manage.py test --noinput
 after_success:
 - coveralls
