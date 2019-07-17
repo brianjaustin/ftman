@@ -162,9 +162,6 @@ def export_tournament(request, tournament_id):
     Args:
         request: Django request object
         tournament_id: the tournament whose registrations to export
-
-    Returns:
-
     """
     response = HttpResponse(content_type="text/csv")
     response[
@@ -173,7 +170,7 @@ def export_tournament(request, tournament_id):
     writer = csv.writer(response)
     writer.writerow(["First Name", "Last Name", "Event", "Weapon Rating"])
 
-    tournament = Tournament.objects.get(pk=tournament_id)
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
     events = tournament.event_set.all()
     for event in events:
         for fencer in event.fencers.all():
