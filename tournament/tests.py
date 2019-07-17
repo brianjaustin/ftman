@@ -370,6 +370,32 @@ class TournamentDetailTest(TestCase):
         self.assertContains(response, '<a href="/event/1/unregister">')
 
 
+class TournamentExportTest(TestCase):
+    def test_export_anonymous(self):
+        """
+        Check that anonymous users are redirected when trying to export a tournament CSV.
+        """
+        response = self.client.get(
+            reverse("tournament_export", kwargs={"tournament_id": 1})
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_export_nonexistent(self):
+        """
+        URLs that point to non-existent tournaments should 404 rather than throwing a Django
+        error message.
+        """
+        user_model = get_user_model()
+        user_model.objects.create_superuser(
+            username="test", email="test@example.com", password="test"
+        )
+        self.client.login(username="test", password="test")
+        response = self.client.get(
+            reverse("tournament_export", kwargs={"tournament_id": 1})
+        )
+        self.assertEqual(response.status_code, 404)
+        
+
 class FencerProfileTest(TestCase):
     def test_get_anonymous(self):
         """
